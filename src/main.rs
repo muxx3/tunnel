@@ -8,7 +8,6 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 #[allow(unused_imports)]
 use tracing::{debug, error, info, warn};
-use tracing_subscriber;
 
 #[derive(Parser)]
 #[command(name = "tunnel")]
@@ -38,10 +37,17 @@ enum Commands {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Initialize tracing subscriber (logs to stdout)
-    tracing_subscriber::fmt::init();
-
     let cli = Cli::parse();
+
+    if cli.debug {
+        tracing_subscriber::fmt()
+            .with_max_level(tracing::Level::DEBUG)
+            .init();
+    } else {
+        tracing_subscriber::fmt()
+            .with_max_level(tracing::Level::INFO)
+            .init();
+    }
 
     match cli.command {
         Commands::Send { file, target_ip } => {
