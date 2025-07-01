@@ -49,6 +49,7 @@ async fn main() -> Result<()> {
             .init();
     }
 
+    println!(">>> DEBUG: Entering match on cli.command");
     match cli.command {
         Commands::Send { file, target_ip } => {
             info!("Send called with file: {} to IP: {}", file, target_ip);
@@ -60,6 +61,7 @@ async fn main() -> Result<()> {
         }
         Commands::Dig {} => {
             info!("Dig called");
+            println!(">>> DEBUG: Inside Dig arm before handle()");
             commands::dig::handle().await?
         }
     }

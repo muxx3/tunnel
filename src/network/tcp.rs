@@ -47,30 +47,44 @@ pub async fn receive_file<P: AsRef<Path>>(save_path: P, port: u16) -> Result<()>
 
     //TODO: accept multiple connections at once
 
+    tracing::info!("Listening for incoming files on port {}", port);
+
     // Accpet a single connecton for now
-    let (mut socket, addr) = listener
-        .accept()
-        .await
-        .with_context(|| "Failed to accept incoming connections")?;
-
-    tracing::info!("Connection accepted from {}", addr);
-
-    //TODO: accept multiple incoming files (loop or concurrent accepts?)
-
-    let mut file = File::create(save_path.as_ref())
-        .await
-        .with_context(|| "Failed to create file for writing")?;
-
-    let mut buffer = [0u8; 4096];
     loop {
-        let n = socket.read(&mut buffer).await?;
-        if n == 0 {
-            break;
+        let (mut socket, addr) = listener
+            .accept()
+            .await
+            .with_context(|| "Failed to accept incoming connection")?;
+
+        tracing::info!("Connection accepted from {}", addr);
+
+        // Read first few bytes to check for probe
+        let mut probe_buf = [0u8; 12]; // "HELLO_TUNNEL" length
+        let n = socket.peek(&mut probe_buf).await?;
+
+        if n >= 12 && &probe_buf[..12] == b"HELLO_TUNNEL" {
+            tracing::info!("Received discovery probe from {}", addr);
+            continue; // Skip and keep listening for real files
         }
-        file.write_all(&buffer[..n]).await?;
+
+        //TODO: accept multiple incoming files (loop or concurrent accepts?)
+
+        let mut file = File::create(save_path.as_ref())
+            .await
+            .with_context(|| "Failed to create file for writing")?;
+
+        let mut buffer = [0u8; 4096];
+        loop {
+            let n = socket.read(&mut buffer).await?;
+            if n == 0 {
+                break;
+            }
+            file.write_all(&buffer[..n]).await?;
+        }
+
+        tracing::info!(
+            "File successfully received and saved as {:?}",
+            save_path.as_ref()
+        );
     }
-
-    tracing::info!("File successfully received and saved.");
-
-    Ok(())
 }
