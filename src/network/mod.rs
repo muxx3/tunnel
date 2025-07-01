@@ -1,2 +1,2 @@
 pub mod discovery;
-mod tcp;
+pub mod tcp;

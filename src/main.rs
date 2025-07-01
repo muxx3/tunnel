@@ -52,7 +52,7 @@ async fn main() -> Result<()> {
     match cli.command {
         Commands::Send { file, target_ip } => {
             info!("Send called with file: {} to IP: {}", file, target_ip);
-            commands::send::handle(file, target_ip).await
+            commands::send::handle(file, target_ip).await?
         }
         Commands::Recv {} => {
             info!("Recv called");
