@@ -45,6 +45,8 @@ pub async fn receive_file<P: AsRef<Path>>(save_path: P, port: u16) -> Result<()>
         .await
         .with_context(|| format!("Failed to bind to port {}", port))?;
 
+    //TODO: accept multiple connections at once
+
     // Accpet a single connecton for now
     let (mut socket, addr) = listener
         .accept()
@@ -52,6 +54,8 @@ pub async fn receive_file<P: AsRef<Path>>(save_path: P, port: u16) -> Result<()>
         .with_context(|| "Failed to accept incoming connections")?;
 
     tracing::info!("Connection accepted from {}", addr);
+
+    //TODO: accept multiple incoming files (loop or concurrent accepts?)
 
     let mut file = File::create(save_path.as_ref())
         .await

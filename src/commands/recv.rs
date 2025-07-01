@@ -4,6 +4,8 @@ use tracing::info;
 use crate::network::tcp;
 
 pub async fn handle() -> Result<()> {
+    //TODO: Save to downloads and keep the FN same as senders
+
     let save_path = "received_file"; // Default file name
     let port = 8080;
 
