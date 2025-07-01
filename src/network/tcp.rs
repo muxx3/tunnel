@@ -2,7 +2,7 @@ use anyhow::{Context, Result};
 use std::path::Path;
 use tokio::fs::File;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::net::TcpStream;
+use tokio::net::{TcpListener, TcpStream};
 
 /// Sends a file to the given target IP and port using TCP.
 ///
@@ -37,5 +37,36 @@ pub async fn send_file<P: AsRef<Path>>(file_path: P, target_ip: &str, port: u16)
         }
         stream.write_all(&buffer[..n]).await?;
     }
+    Ok(())
+}
+
+pub async fn receive_file<P: AsRef<Path>>(save_path: P, port: u16) -> Result<()> {
+    let listener = TcpListener::bind(("0.0.0.0", port))
+        .await
+        .with_context(|| format!("Failed to bind to port {}", port))?;
+
+    // Accpet a single connecton for now
+    let (mut socket, addr) = listener
+        .accept()
+        .await
+        .with_context(|| "Failed to accept incoming connections")?;
+
+    tracing::info!("Connection accepted from {}", addr);
+
+    let mut file = File::create(save_path.as_ref())
+        .await
+        .with_context(|| "Failed to create file for writing")?;
+
+    let mut buffer = [0u8; 4096];
+    loop {
+        let n = socket.read(&mut buffer).await?;
+        if n == 0 {
+            break;
+        }
+        file.write_all(&buffer[..n]).await?;
+    }
+
+    tracing::info!("File successfully received and saved.");
+
     Ok(())
 }

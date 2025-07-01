@@ -56,7 +56,7 @@ async fn main() -> Result<()> {
         }
         Commands::Recv {} => {
             info!("Recv called");
-            commands::recv::handle().await
+            commands::recv::handle().await?
         }
         Commands::Dig {} => {
             info!("Dig called");

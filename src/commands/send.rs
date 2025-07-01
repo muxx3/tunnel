@@ -13,6 +13,6 @@ pub async fn handle(file: String, target_ip: String) -> Result<()> {
     // Call tcp::send_file with file path (String works since it implements AsRef<Path>)
     tcp::send_file(&file, &target_ip, port).await?;
 
-    println!("(OK): {} sent to {} on port: {}", file, target_ip, port);
+    println!("[ OK ] {} sent to {} on port: {}", file, target_ip, port);
     Ok(())
 }
