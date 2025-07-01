@@ -60,7 +60,7 @@ async fn main() -> Result<()> {
         }
         Commands::Dig {} => {
             info!("Dig called");
-            commands::dig::handle().await
+            commands::dig::handle().await?
         }
     }
 
