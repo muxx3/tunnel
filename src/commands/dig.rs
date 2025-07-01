@@ -1,3 +1,4 @@
 pub async fn handle() {
-    println!("Dig called\nListing connections to send:\n------ IP list... ------")
+    tracing::info!("Handling Dig: <IP_LIST>");
+    println!("(Stub) Listing connections to send:\n------ IP list... ------")
 }

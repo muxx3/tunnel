@@ -1,3 +1,4 @@
 pub async fn handle(file: String, target_ip: String) {
-    println!("Send called with file: {} to IP: {}", file, target_ip);
+    tracing::info!("Handling send: file = {}, target = {}", file, target_ip);
+    println!("(Stub) Sending {} to {}", file, target_ip);
 }

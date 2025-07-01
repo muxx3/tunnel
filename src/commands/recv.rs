@@ -1,3 +1,4 @@
 pub async fn handle() {
-    println!("Recv called\nFile(s) to be recieved:\n ...",)
+    tracing::info!("Handling recv: <file_received> from <IP> ");
+    println!("(Stub) File(s) to be received:...",)
 }
