@@ -1,16 +1,34 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
+use futures::stream::{FuturesUnordered, StreamExt};
+use tokio::net::TcpStream;
 
-/// Discover peers on the local network (stub version).
-///
-/// Currently uses a static list of example IPs for testing.
-/// Future versions can use ARP scan, UDP broadcast, or mDNS.
 pub async fn discover_peers() -> Result<Vec<String>> {
-    // Stub: pretend we "discovered" these
-    let simulated_peers = vec![
-        "192.168.1.10".to_string(),
-        "192.168.1.15".to_string(),
-        "192.168.1.20".to_string(),
-    ];
+    let base_ip = "192.168.1.";
+    let port = 8080;
+    let mut tasks = FuturesUnordered::new();
 
-    Ok(simulated_peers)
+    for i in 1..=254 {
+        let ip = format!("{}{}", base_ip, i);
+        let addr = format!("{}:{}", ip, port);
+
+        tasks.push(async move {
+            match TcpStream::connect(&addr)
+                .await
+                .with_context(|| format!("Failed to connect to {}", addr))
+            {
+                Ok(_) => Some(ip),
+                Err(_) => None,
+            }
+        });
+    }
+
+    let mut peers = Vec::new();
+
+    while let Some(result) = tasks.next().await {
+        if let Some(ip) = result {
+            peers.push(ip);
+        }
+    }
+
+    Ok(peers)
 }

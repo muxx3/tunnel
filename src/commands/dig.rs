@@ -5,7 +5,7 @@ use crate::network::discovery::discover_peers;
 
 /// Handle "dig" command to discover peers.
 pub async fn handle() -> Result<()> {
-    info!("Handlig Dig: Starting peer discovery...");
+    info!("Starting peer discovery...");
 
     let peers = discover_peers().await?;
 
