@@ -24,16 +24,19 @@ Tunnel is a command-line (and TUI-enhanced) peer-to-peer file sharing applicatio
 	cd tunnel
 	cargo build --release
 
+    sudo mv target/release/tunnel /usr/local/bin/tunnel
+        -   Makes 'tunnel' globally executable
+
 ## Usage
 
 ### Start receiver on target device
-	cargo run -- recv
+	tunnel recv
 
 		-   Starts listening for incoming files on TCP port 8080.
 		-   Also starts a UDP responder to reply to local peer discovery.
 ---
 ### Discover peers / Interactive mode (recommended)
-	cargo run -- dig
+	tunnel dig
 	
 		-   Broadcasts `DISCOVER` message on your local network (UDP).
 		-   Lists available peers that are running `recv`.
@@ -42,13 +45,13 @@ Tunnel is a command-line (and TUI-enhanced) peer-to-peer file sharing applicatio
 		-   The file will be sent automatically.
 ---
 ### Send a file (just commands)
-	cargo run -- send --file <path> --target-ip <ip-address>
+	tunnel send --file <path> --target-ip <ip-address>
 	
 		-	Sends file to given IP on TCP port 8080.
 		-	Receiver must be running cargo run -- recv
 ---
 ### Send to mobile (QR code)
-	cargo run -- serve
+	tunnel serve
 	
 		-   Generates a QR code in your terminal
 		-   Scan it with your phone to download the file over HTTP.
@@ -84,7 +87,7 @@ Tunnel is a command-line (and TUI-enhanced) peer-to-peer file sharing applicatio
  - [ ]  Add file integrity checks (e.g., hashes).
  - [ ] Improve progress reporting.
  - [ ] Allow customizable ports and config.
- - [ ] Add native commands to use ‘tunnel’ instead or 'cargo'
+ - [x] Add native commands to use ‘tunnel’ instead or 'cargo'
  
  ## Disclaimer
 
