@@ -87,7 +87,7 @@ Tunnel is a command-line (and TUI-enhanced) peer-to-peer file sharing applicatio
  - [ ]  Add file integrity checks (e.g., hashes).
  - [ ] Improve progress reporting.
  - [ ] Allow customizable ports and config.
- - [x] Add native commands to use ‘tunnel’ instead or 'cargo'
+ - [x] Add native commands to use ‘tunnel’ instead of 'cargo'
  
  ## Disclaimer
 
