@@ -33,6 +33,11 @@ enum Commands {
     Recv {},
     /// Search for peers on the network
     Dig {},
+    /// Serve a file over HTTP and show QR
+    Serve {
+        #[arg(short, long)]
+        file: String,
+    },
 }
 
 #[tokio::main]
@@ -63,6 +68,10 @@ async fn main() -> Result<()> {
             info!("Dig called");
             println!(">>> DEBUG: Inside Dig arm before handle()");
             commands::dig::handle().await?
+        }
+        Commands::Serve { file } => {
+            info!("Serve called with file: {}", file);
+            commands::serve::handle(file).await?
         }
     }
 

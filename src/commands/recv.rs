@@ -6,7 +6,7 @@ use tracing::info;
 use crate::network::tcp;
 
 pub async fn handle() -> Result<()> {
-    let save_path = "received_file"; // Default file name
+    let save_path = "received_file.txt"; // Default file name
     let port = 8080;
 
     info!(
