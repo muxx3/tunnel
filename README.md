@@ -48,7 +48,7 @@ Tunnel is a command-line (and TUI-enhanced) peer-to-peer file sharing applicatio
 	tunnel send --file <path> --target-ip <ip-address>
 	
 		-	Sends file to given IP on TCP port 8080.
-		-	Receiver must be running cargo run -- recv
+		-	Receiver must be running 'tunnel recv' to be seen
 ---
 ### Send to mobile (QR code)
 	tunnel serve --file <path>
