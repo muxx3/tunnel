@@ -51,7 +51,7 @@ Tunnel is a command-line (and TUI-enhanced) peer-to-peer file sharing applicatio
 		-	Receiver must be running cargo run -- recv
 ---
 ### Send to mobile (QR code)
-	tunnel serve
+	tunnel serve --file <path>
 	
 		-   Generates a QR code in your terminal
 		-   Scan it with your phone to download the file over HTTP.
