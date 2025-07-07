@@ -1,5 +1,10 @@
-# 🌐 Tunnel
-[![Rust Version](https://img.shields.io/badge/rust-1.70%2B-orange.svg)](https://www.rust-lang.org) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/muxx3/tunnel/pulls)  ![Built with Axum](https://img.shields.io/badge/built%20with-axum-7B4FFF) ![Powered by Tokio](https://img.shields.io/badge/powered%20by-tokio-4B275F)
+<h1 align="center">🌐 Tunnel</h1>
+
+<div align="center">
+	
+[![Rust Version](https://img.shields.io/badge/rust-1.70%2B-orange.svg)](https://www.rust-lang.org) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/muxx3/tunnel/pulls) ![Built with Axum](https://img.shields.io/badge/built%20with-axum-7B4FFF) ![Powered by Tokio](https://img.shields.io/badge/powered%20by-tokio-4B275F)
+
+</div>
 
 ## REFLECTION POINT #1
 ### This is what the project can do as of now and I'll be adding more soon
@@ -84,7 +89,7 @@ Tunnel is a command-line (and TUI-enhanced) peer-to-peer file sharing applicatio
 
 ## TODO
  - [ ] Add encryption support.
- - [ ]  Add file integrity checks (e.g., hashes).
+ - [ ] Add file integrity checks (e.g., hashes).
  - [ ] Improve progress reporting.
  - [ ] Allow customizable ports and config.
  - [x] Add native commands to use ‘tunnel’ instead of 'cargo'
