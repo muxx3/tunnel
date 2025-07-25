@@ -32,6 +32,9 @@ Tunnel is a command-line (and TUI-enhanced) peer-to-peer file sharing applicatio
     sudo mv target/release/tunnel /usr/local/bin/tunnel
         -   Makes 'tunnel' globally executable
 
+ <p align="center">
+<a href="https://www.youtube.com/shorts/v4RYwT8bcp4">Watch Demo here (1 min)</a>
+ </p>
 <p align="center">
   <img src="tunneldemo.gif" alt="Tunnel Demo" width="600"/>
 </p>
