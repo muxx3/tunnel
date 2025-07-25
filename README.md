@@ -12,7 +12,7 @@
 
     A modern CLI + TUI peer-to-peer file sharing tool (WIP)
   \
-Tunnel is a command-line (and TUI-enhanced) peer-to-peer file sharing application, written in Rust. It allows you to quickly share files between devices on the same local network (WiFi) with optional QR code-based HTTP serving for mobile devices. 
+Tunnel is a command-line peer-to-peer file sharing tool, written in Rust. Quickly share files between devices on the same network (WiFi). Optional QR code-based HTTP sharing for computer -> <strong>MOBILE</strong> device sharing. 
 
 ## Features
 
