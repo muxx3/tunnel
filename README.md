@@ -1,4 +1,4 @@
-<h1 align="center">🌐 Tunnel</h1>
+<h1 align="center">Tunnel</h1>
 
 <div align="center">
 	
@@ -31,6 +31,11 @@ Tunnel is a command-line (and TUI-enhanced) peer-to-peer file sharing applicatio
 
     sudo mv target/release/tunnel /usr/local/bin/tunnel
         -   Makes 'tunnel' globally executable
+
+<p align="center">
+  <img src="tunneldemo.gif" alt="Tunnel Demo" width="600"/>
+</p>
+
 
 ## Usage
 
