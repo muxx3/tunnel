@@ -1,4 +1,3 @@
-// src/main.rs
 mod commands;
 mod errors;
 mod network;
@@ -22,21 +21,21 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Send a file to a peer
+    // send a file to a peer
     Send {
-        #[arg(short, long)]
-        file: String,
+        #[arg(short, long, num_args = 1..)]
+        file: Vec<String>,
         #[arg(short, long)]
         target_ip: String,
     },
-    /// Receive an incoming file
+    // receive an incoming file
     Recv {},
-    /// Search for peers on the network
+    // search for peers on the network
     Dig {},
-    /// Serve a file over HTTP and show QR
+    // serve a file over HTTP and show QR
     Serve {
-        #[arg(short, long)]
-        file: String,
+        #[arg(short, long, num_args = 1..)]
+        file: Vec<String>,
     },
 }
 
@@ -57,7 +56,7 @@ async fn main() -> Result<()> {
     println!(">>> DEBUG: Entering match on cli.command");
     match cli.command {
         Commands::Send { file, target_ip } => {
-            info!("Send called with file: {} to IP: {}", file, target_ip);
+            info!("Send called with file(s): {:?} to IP: {}", file, target_ip);
             commands::send::handle(file, target_ip).await?
         }
         Commands::Recv {} => {
@@ -70,7 +69,7 @@ async fn main() -> Result<()> {
             commands::dig::handle().await?
         }
         Commands::Serve { file } => {
-            info!("Serve called with file: {}", file);
+            info!("Serve called with file: {:?}", file);
             commands::serve::handle(file).await?
         }
     }

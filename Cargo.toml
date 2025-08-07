@@ -17,3 +17,8 @@ axum = "0.8.4"
 qrcode = "0.14.1"
 local-ip-address = "0.6.5"
 hyper = "1.6.0"
+tempfile = "3.20.0"
+zip = "0.6.0"
+walkdir = "2.5.0"
+tower-http = { version = "0.6.6", features = ["fs"] }
+url = "2.5.4"
