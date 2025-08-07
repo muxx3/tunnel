@@ -2,10 +2,9 @@ use anyhow::Result;
 use std::net::UdpSocket;
 use std::time::{Duration, Instant};
 
-/// Broadcast a discovery ping and collect peer replies
 pub async fn discover_peers() -> Result<Vec<String>> {
     let broadcast_addr = "192.168.1.255:8888";
-    let listen_addr = "0.0.0.0:0"; // OS assigns random free port for receiving replies
+    let listen_addr = "0.0.0.0:0";
 
     let socket = UdpSocket::bind(listen_addr)?;
     socket.set_broadcast(true)?;
