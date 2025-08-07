@@ -1,18 +1,22 @@
 use crate::network::tcp;
 use anyhow::Result;
-
+use std::path::PathBuf;
 use tracing::{debug, info};
 
-pub async fn handle(file: String, target_ip: String) -> Result<()> {
-    info!("Handling send: file = {}", file);
-    debug!("File: {}, TargetIP: {}", file, target_ip);
+pub async fn handle(files: Vec<String>, target_ip: String) -> Result<()> {
+    info!("Handling send: files = {:?}", files);
+    debug!("File: {:?}, TargetIP: {}", files, target_ip);
 
-    // Use default port for now
     let port = 8080;
+    let paths: Vec<PathBuf> = files.iter().map(PathBuf::from).collect();
 
-    // Call tcp::send_file with file path (String works since it implements AsRef<Path>)
-    tcp::send_file(&file, &target_ip, port).await?;
+    tcp::send_files(&paths, &target_ip, port).await?;
 
-    println!("[ OK ] {} sent to {} on port: {}", file, target_ip, port);
+    println!(
+        "[ OK ] Sent {} item(s) to {} on port: {}",
+        paths.len(),
+        target_ip,
+        port
+    );
     Ok(())
 }

@@ -6,7 +6,7 @@ use tracing::info;
 use crate::network::tcp;
 
 pub async fn handle() -> Result<()> {
-    let save_path = "received_file.txt"; // Default file name
+    // TODO: Ideally dynamically set this or receive as param
     let port = 8080;
 
     info!(
@@ -14,7 +14,7 @@ pub async fn handle() -> Result<()> {
         port
     );
 
-    // Start UDP discovery reply thread
+    // start UDP discovery responder thread
     thread::spawn(|| {
         let udp_socket = UdpSocket::bind("0.0.0.0:8888").expect("Failed to bind UDP socket");
         let mut buf = [0u8; 1024];
@@ -28,9 +28,10 @@ pub async fn handle() -> Result<()> {
         }
     });
 
-    tcp::receive_file(save_path, port).await?;
+    tcp::receive_file("", port).await?;
+    let path = tcp::receive_file("", port).await?;
 
-    println!("[ OK ] File received and saved as '{}'", save_path);
+    println!("[ OK ] File received and saved as '{:?}'", path);
 
     Ok(())
 }

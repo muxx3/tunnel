@@ -20,7 +20,6 @@ pub async fn handle() -> Result<()> {
         return Ok(());
     }
 
-    // Add "Quit" option at the end
     peers.push("Quit".to_string());
 
     enable_raw_mode()?;
@@ -34,7 +33,7 @@ pub async fn handle() -> Result<()> {
 
         execute!(stdout, MoveTo(0, current_y))?;
         println!("Select a tunnel to bury your file into (j/k or arrows, Enter to confirm):");
-        current_y += 2; // Extra spacing
+        current_y += 2;
 
         for (i, peer) in peers.iter().enumerate() {
             execute!(stdout, MoveTo(0, current_y))?;
@@ -80,12 +79,13 @@ pub async fn handle() -> Result<()> {
                         disable_raw_mode()?;
                         println!("\nSelected tunnel: {}", chosen);
 
-                        println!("Enter file path to send:");
-                        let mut file_path = String::new();
-                        io::stdin().read_line(&mut file_path)?;
-                        let file_path = file_path.trim().to_string();
+                        println!("Enter file paths to send (space-separated):");
+                        let mut input = String::new();
+                        io::stdin().read_line(&mut input)?;
+                        let inputs: Vec<String> =
+                            input.split_whitespace().map(|s| s.to_string()).collect();
 
-                        send::handle(file_path, chosen.to_string()).await?;
+                        send::handle(inputs, chosen.to_string()).await?;
 
                         println!("File sent to {}", chosen);
                         return Ok(());

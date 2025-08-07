@@ -1,92 +1,51 @@
-use anyhow::Result;
-use axum::{
-    extract::State,
-    http::{header, HeaderMap, StatusCode},
-    response::{IntoResponse, Response},
-    routing::get,
-    Router,
-};
+use crate::network::zip_helper::create_zip_from_paths;
+use axum::{routing::get_service, Router};
 use local_ip_address::local_ip;
-use qrcode::render::unicode;
-use qrcode::QrCode;
-use std::{net::IpAddr, path::PathBuf, sync::Arc};
-use tokio::fs::File;
-use tokio::io::AsyncReadExt;
+use qrcode::{render::unicode, QrCode};
+use std::net::SocketAddr;
+use std::path::PathBuf;
 use tokio::net::TcpListener;
+use tower_http::services::ServeDir;
+use url::Url;
 
-#[derive(Clone)]
-struct AppState {
-    file_path: Arc<PathBuf>,
-    file_name: Arc<String>,
-}
-
-pub async fn handle(file_path: String) -> Result<()> {
-    let path = PathBuf::from(&file_path);
-    if !path.exists() {
-        println!("File does not exist: {}", file_path);
-        return Ok(());
+pub async fn handle(inputs: Vec<String>) -> anyhow::Result<()> {
+    if inputs.is_empty() {
+        anyhow::bail!("Please provide one or more files or directories to serve");
     }
 
-    let file_name = path
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or("donwload")
-        .to_string();
+    let paths: Vec<PathBuf> = inputs.iter().map(PathBuf::from).collect();
 
-    let ip_addr: IpAddr = local_ip().unwrap_or_else(|_| "127.0.0.1".parse().unwrap());
-    let local_ip = ip_addr.to_string();
-
-    let state = AppState {
-        file_path: Arc::new(path),
-        file_name: Arc::new(file_name),
+    let serve_path = if paths.len() == 1 && paths[0].is_file() {
+        paths[0].clone()
+    } else {
+        let tmp_dir = std::env::temp_dir();
+        let zip_path = tmp_dir.join("tunnel.zip");
+        create_zip_from_paths(&paths, &zip_path)?;
+        zip_path
     };
 
-    let app = Router::new()
-        .route("/download", get(download_handler))
-        .with_state(state);
+    let dir = serve_path
+        .parent()
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."));
 
-    let addr = "0.0.0.0:8080";
-    let server_url = format!("http://{}:8080/download", local_ip);
+    let filename = serve_path.file_name().unwrap().to_string_lossy();
 
-    let code = QrCode::new(&server_url).expect("Failed to generate QR code");
-    let qr = code.render::<unicode::Dense1x2>().build();
-    println!("\nScan this QR code on your phone to download the file:");
-    println!("{}", qr);
-    println!("Or open this URL manually: {}", server_url);
+    let app = Router::new().fallback_service(get_service(ServeDir::new(&dir)));
 
-    println!("[ OK ] HTTP server started on {}", addr);
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
+    let listener = TcpListener::bind(addr).await?;
+    let ip = local_ip()?;
+    let url = Url::parse(&format!("http://{}:8080/{}", ip, filename))?;
 
-    let listener = TcpListener::bind(addr).await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    let qr = QrCode::new(url.as_str())?;
+    let qr_text = qr.render::<unicode::Dense1x2>().build();
+
+    println!("Scan this QR to download:\n{}", url);
+    println!("{}", qr_text);
+
+    println!("Serving {} on http://{}", filename, addr);
+    axum::serve(listener, app).await?;
 
     Ok(())
-}
-
-async fn download_handler(State(state): State<AppState>) -> Response {
-    let mut file = match File::open(&*state.file_path).await {
-        Ok(f) => f,
-        Err(_) => return StatusCode::NOT_FOUND.into_response(),
-    };
-
-    let mut contents = Vec::new();
-    if file.read_to_end(&mut contents).await.is_err() {
-        return StatusCode::INTERNAL_SERVER_ERROR.into_response();
-    }
-
-    // Prepare headers
-    let mut headers = HeaderMap::new();
-    headers.insert(
-        header::CONTENT_TYPE,
-        "application/octet-stream".parse().unwrap(),
-    );
-
-    // This header tells the browser the filename for saving the file
-    headers.insert(
-        header::CONTENT_DISPOSITION,
-        format!("attachment; filename=\"{}\"", state.file_name)
-            .parse()
-            .unwrap(),
-    );
-
-    (headers, contents).into_response()
 }
